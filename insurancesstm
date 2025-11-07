@@ -1,0 +1,2415 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InsureManage Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body {
+            font-family: 'SF Pro Display', 'Inter', sans-serif;
+            background: #f8f9fc;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .shadow-ios {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07), 0 0 0 1px rgba(0, 0, 0, 0.04);
+        }
+        
+        .shadow-ios-lg {
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-ios {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 0, 0, 0.08); /* Darker border for contrast on white */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+        }
+        
+        .btn-ios-primary {
+            background: linear-gradient(135deg, #007AFF 0%, #0056CC 100%);
+            color: white;
+            box-shadow: 0 4px 14px rgba(0, 122, 255, 0.3);
+            transition: all 0.2s ease;
+        }
+        
+        .btn-ios:active, .btn-ios-primary:active {
+            transform: scale(0.97);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.25);
+            border-color: rgba(0, 122, 255, 0.5);
+            outline: none;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .chat-bubble-user {
+            background: linear-gradient(135deg, #007AFF 0%, #0056CC 100%);
+            color: white;
+            border-bottom-right-radius: 0.5rem;
+        }
+        .chat-bubble-ai {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: #1f2937;
+            border-bottom-left-radius: 0.5rem;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .stepper-item {
+            @apply flex flex-col items-center flex-1;
+        }
+        .stepper-item-icon {
+            @apply h-10 w-10 rounded-full flex items-center justify-center font-bold text-white transition-all duration-300;
+        }
+        .stepper-item-line {
+            @apply flex-1 h-1 transition-all duration-300;
+            position: absolute;
+            top: 20px;
+            left: -50%;
+            right: 50%;
+            transform: translateY(-50%);
+            z-index: -1;
+        }
+        .stepper-item {
+            position: relative;
+        }
+        .stepper-item:first-child .stepper-item-line {
+            display: none;
+        }
+        .stepper-item.active .stepper-item-icon {
+            @apply bg-blue-600;
+            transform: scale(1.1);
+        }
+        .stepper-item.active .stepper-item-line {
+            @apply bg-blue-600;
+        }
+        .stepper-item.complete .stepper-item-icon {
+            @apply bg-green-600;
+        }
+        .stepper-item.complete .stepper-item-line {
+            @apply bg-green-600;
+        }
+        .stepper-item.inactive .stepper-item-icon {
+            @apply bg-gray-300;
+        }
+         .stepper-item.inactive .stepper-item-line {
+            @apply bg-gray-300;
+        }
+
+        
+        .ios-toggle {
+            position: relative;
+            display: inline-block;
+            width: 52px;
+            height: 32px;
+        }
+        
+        .ios-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .ios-toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #e5e5ea;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .ios-toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 28px;
+            width: 28px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        input:checked + .ios-toggle-slider {
+            background-color: #34C759;
+        }
+        
+        input:checked + .ios-toggle-slider:before {
+            transform: translateX(20px);
+        }
+        
+        .premium-card {
+            transition: all 0.3s ease;
+        }
+        
+        .premium-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 122, 255, 0.1);
+        }
+        
+        .ios-nav {
+            background: rgba(248, 249, 252, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+        
+        @keyframes pageFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .app-page {
+            animation: pageFadeIn 0.4s ease-out;
+        }
+        
+        .ios-input {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+        
+        .ios-input:focus {
+            border-color: #007AFF;
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2);
+        }
+
+        .login-input {
+            @apply w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-500 transition-all duration-200;
+        }
+        .login-input:focus {
+            @apply bg-white border-blue-500;
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2);
+        }
+        
+        .segmented-control {
+            display: flex;
+            background: rgba(230, 230, 235, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 4px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        
+        .segmented-control-option {
+            flex: 1;
+            text-align: center;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            z-index: 2;
+            color: #3A3A3C;
+        }
+        
+        .segmented-control-option.active {
+            color: #000;
+            font-weight: 600;
+        }
+        
+        .segmented-control-indicator {
+            position: absolute;
+            top: 4px;
+            bottom: 4px;
+            width: calc(33.33% - 4px);
+            background: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1;
+        }
+
+        .nav-link {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        .nav-link.active-nav {
+            background-color: #007AFF1A;
+            color: #007AFF;
+            font-weight: 600;
+        }
+        .nav-link.active-nav::before {
+            content: '';
+            position: absolute;
+            left: -16px;
+            top: 10px;
+            bottom: 10px;
+            width: 4px;
+            background-color: #007AFF;
+            border-radius: 0 4px 4px 0;
+        }
+        .nav-link:not(.active-nav):hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            transform: scale(1.02);
+        }
+
+        #auth-view {
+            background-color: #f5f5f7;
+        }
+    </style>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'ios-blue': '#007AFF',
+                        'ios-green': '#34C759',
+                        'ios-indigo': '#5856D6',
+                        'ios-orange': '#FF9500',
+                        'ios-pink': '#FF2D55',
+                        'ios-purple': '#AF52DE',
+                        'ios-red': '#FF3B30',
+                        'ios-teal': '#5AC8FA',
+                        'ios-yellow': '#FFCC00',
+                        'ios-gray': {
+                            100: '#F2F2F7',
+                            200: '#E5E5EA',
+                            300: '#D1D1D6',
+                            400: '#C7C7CC',
+                            500: '#AEAEB2',
+                            600: '#8E8E93',
+                            700: '#636366',
+                            800: '#48484A',
+                            900: '#3A3A3C',
+                        }
+                    },
+                    fontFamily: {
+                        'sans': ['SF Pro Display', 'Inter', 'system-ui', 'sans-serif'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'bounce-slow': 'bounce 2s infinite',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="h-full text-gray-900 antialiased">
+
+    <!-- 
+      SECTION 1: LOGIN / SIGNUP / RESET VIEW 
+    -->
+    <div id="auth-view" class="flex min-h-full">
+        
+        <div class="hidden md:flex w-1/2 bg-cover bg-center flex-col justify-center items-center p-12 text-center h-screen sticky top-0" style="background-image: url('https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=2074&auto=format&fit=crop');" onerror="this.style.backgroundImage='url(https://placehold.co/800x1000/667eea/ffffff?text=Aesthetic+Scenery)'" data-aos="fade-right" data-aos-duration="800">
+            <div class="bg-black/20 backdrop-blur-sm p-8 rounded-2xl m-auto" data-aos="fade-up" data-aos-delay="200" data-aos-duration="800">
+                <div class="flex justify-center mb-4">
+                    <div class="h-16 w-16 rounded-2xl bg-white/20 flex items-center justify-center shadow-lg border border-white/30">
+                        <svg class="h-8 w-8" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="logoGradHeader" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#E0E7FF;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <path d="M12 2L3 5V11C3 16.5 6.8 21.7 12 23C17.2 21.7 21 16.5 21 11V5L12 2Z" fill="#4F46E5" />
+                            <path d="M12 4.03L19 7.03V11C19 15.5 16.1 19.7 12 20.9C7.9 19.7 5 15.5 5 11V7.03L12 4.03Z" fill="url(#logoGradHeader)" />
+                            <path d="M10.75 15.15L8.6 13L7.5 14.1L10.75 17.35L17.5 10.6L16.4 9.5L10.75 15.15Z" fill="#4F46E5"/>
+                        </svg>
+                    </div>
+                </div>
+                <h2 class="mt-2 text-3xl font-bold tracking-tight text-white" style="text-shadow: 0 2px 10px rgba(0,0,0,0.5);">
+                    InsureManage <span class="opacity-80">Pro</span>
+                </h2>
+                <p class="mt-2 text-lg text-gray-200" style="text-shadow: 0 1px 5px rgba(0,0,0,0.5);">
+                    Your entire insurance portfolio, one simple dashboard.
+                </p>
+            </div>
+        </div>
+
+        <div class="w-full md:w-1/2 bg-white flex justify-center items-center py-12 px-6 sm:px-12 lg:px-16 overflow-y-auto" data-aos="fade-left" data-aos-duration="800">
+            <div class="w-full max-w-md">
+                <div class="md:hidden flex flex-col items-center mb-8">
+                    <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-700 flex items-center justify-center shadow-lg">
+                        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="logoGradHeaderMob" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#E0E7FF;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <path d="M12 2L3 5V11C3 16.5 6.8 21.7 12 23C17.2 21.7 21 16.5 21 11V5L12 2Z" fill="#4F46E5" />
+                            <path d="M12 4.03L19 7.03V11C19 15.5 16.1 19.7 12 20.9C7.9 19.7 5 15.5 5 11V7.03L12 4.03Z" fill="url(#logoGradHeaderMob)" />
+                            <path d="M10.75 15.15L8.6 13L7.5 14.1L10.75 17.35L17.5 10.6L16.4 9.5L10.75 15.15Z" fill="#4F46E5"/>
+                        </svg>
+                    </div>
+                    <h2 class="mt-4 text-2xl font-bold tracking-tight text-gray-900">
+                        InsureManage Pro
+                    </h2>
+                </div>
+
+                <h3 id="auth-title" class="text-3xl font-bold text-gray-900 tracking-tight">
+                    Sign In
+                </h3>
+                <p id="auth-subtitle" class="mt-2 text-gray-600">to your InsureManage Pro account</p>
+
+
+                <form id="auth-form" class="w-full mt-8">
+                    <div class="space-y-5">
+                        <div id="name-field-group" class="hidden">
+                            <label for="name" class="block text-sm font-medium leading-6 text-gray-700">Full Name</label>
+                            <div class="mt-2">
+                                <input id="name" name="name" type="text" autocomplete="name" placeholder="Jane Doe"
+                                    class="login-input w-full">
+                            </div>
+                        </div>
+
+                        <div id="email-field-group">
+                            <label for="email" class="block text-sm font-medium leading-6 text-gray-700">Email address</label>
+                            <div class="mt-2">
+                                <input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com"
+                                    class="login-input w-full">
+                            </div>
+                        </div>
+
+                        <div id="password-field-group">
+                            <div class="flex items-center justify-between">
+                                <label for="password" class="block text-sm font-medium leading-6 text-gray-700">Password</label>
+                                <div class="text-sm" id="forgot-password-link">
+                                    <a href="#" class="font-medium text-blue-600 hover:text-blue-500 transition-colors duration-200">Forgot password?</a>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <input id="password" name="password" type="password" autocomplete="current-password" required placeholder="••••••••"
+                                    class="login-input w-full">
+                            </div>
+                        </div>
+
+                        <div id="auth-message" class="text-sm text-ios-red hidden"></div>
+
+                        <div>
+                            <button id="auth-submit-button" type="submit"
+                                class="flex w-full h-12 items-center justify-center rounded-lg bg-gray-900 hover:bg-gray-800 text-white px-3 py-3 text-sm font-semibold leading-6 shadow-md transition-all duration-200 ease-in-out transform active:scale-[0.98] disabled:opacity-75">
+                                <span class="button-text">Sign In</span>
+                                <i data-lucide="loader-2" class="spinner button-loader h-5 w-5 hidden"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="mt-8 flex items-center">
+                    <div class="flex-grow border-t border-gray-200"></div>
+                    <span class="flex-shrink mx-4 text-gray-500 text-sm">or continue with</span>
+                    <div class="flex-grow border-t border-gray-200"></div>
+                </div>
+
+                <div class="mt-6 grid grid-cols-2 gap-3">
+                    <button type="button" class="btn-ios rounded-xl py-3 px-4 flex items-center justify-center gap-2 text-sm font-medium transition-all active:scale-95">
+                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                        </svg>
+                        <span>Google</span>
+                    </button>
+                    <button type="button" class="btn-ios rounded-xl py-3 px-4 flex items-center justify-center gap-2 text-sm font-medium transition-all active:scale-95">
+                        <svg class="h-5 w-5 text-black" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701z"/>
+                        </svg>
+                        <span>Apple</span>
+                    </button>
+                </div>
+
+                <p class="mt-8 text-center text-sm text-gray-500">
+                    <span id="auth-toggle-text">Don't have an account?</span>
+                    <a href="#" id="auth-toggle-link" class="font-medium leading-6 text-blue-600 hover:text-blue-500 transition-colors duration-200">
+                        Create one now.
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 
+      SECTION 2: MAIN APP VIEW 
+    -->
+    <div id="app-view" class="hidden h-screen w-full p-4 md:p-6">
+        <div class="ios-nav fixed top-0 left-0 right-0 h-12 z-50 flex items-center justify-between px-4">
+            <div class="text-sm font-medium text-gray-700" id="status-time">9:41</div>
+            <div class="flex items-center space-x-2">
+                <i data-lucide="signal" class="h-4 w-4 text-gray-700"></i>
+                <i data-lucide="wifi" class="h-4 w-4 text-gray-700"></i>
+                <i data-lucide="battery-full" class="h-4 w-4 text-gray-700"></i>
+            </div>
+        </div>
+        
+        <div class="flex h-full max-h-full gap-4 md:gap-6 pt-12">
+            
+            <nav class="w-20 md:w-64 flex-shrink-0 glass rounded-2xl shadow-ios p-4 flex flex-col">
+                <div class="flex items-center gap-3 px-2 mb-10">
+                    <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-700 flex items-center justify-center flex-shrink-0 shadow-lg">
+                        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="logoGradSidebar" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#E0E7FF;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <path d="M12 2L3 5V11C3 16.5 6.8 21.7 12 23C17.2 21.7 21 16.5 21 11V5L12 2Z" fill="#4F46E5" />
+                            <path d="M12 4.03L19 7.03V11C19 15.5 16.1 19.7 12 20.9C7.9 19.7 5 15.5 5 11V7.03L12 4.03Z" fill="url(#logoGradSidebar)" />
+                            <path d="M10.75 15.15L8.6 13L7.5 14.1L10.75 17.35L17.5 10.6L16.4 9.5L10.75 15.15Z" fill="#4F46E5"/>
+                        </svg>
+                    </div>
+                    <span class="text-2xl font-bold hidden md:inline tracking-tight">Insure<span class="bg-gradient-to-r from-ios-blue to-ios-indigo bg-clip-text text-transparent">Pro</span></span>
+                </div>
+
+                <ul class="flex flex-col space-y-2 flex-grow">
+                    <li><a href="#dashboard" class="nav-link">
+                        <i data-lucide="layout-dashboard"></i> <span class="hidden md:inline">Dashboard</span>
+                    </a></li>
+                    <li><a href="#policies" class="nav-link">
+                        <i data-lucide="shield"></i> <span class="hidden md:inline">Policies</span>
+                    </a></li>
+                    <li><a href="#claims" class="nav-link">
+                        <i data-lucide="file-text"></i> <span class="hidden md:inline">Claims</span>
+                    </a></li>
+                    <li><a href="#billing" class="nav-link">
+                        <i data-lucide="credit-card"></i> <span class="hidden md:inline">Billing</span>
+                    </a></li>
+                    <li><a href="#ai-agent" class="nav-link">
+                        <i data-lucide="message-circle"></i> <span class="hidden md:inline">AI Agent</span>
+                    </a></li>
+                    <li><a href="#notifications" class="nav-link">
+                        <i data-lucide="bell"></i> <span class="hidden md:inline">Notifications</span>
+                        <span id="nav-notification-dot" class="h-2.5 w-2.5 bg-ios-red rounded-full hidden ml-auto"></span>
+                    </a></li>
+                    <li><a href="#documents" class="nav-link">
+                        <i data-lucide="folder-open"></i> <span class="hidden md:inline">Documents</span>
+                    </a></li>
+                </ul>
+
+                <div class="mt-auto border-t border-ios-gray-200/60 pt-4">
+                     <a href="#profile" class="nav-link text-ios-gray-700 hover:bg-ios-gray-200/50 rounded-xl mb-2">
+                         <div id="nav-avatar" class="h-8 w-8 rounded-full bg-gradient-to-br from-ios-purple to-ios-pink text-white flex items-center justify-center font-semibold flex-shrink-0">
+                         </div>
+                         <div class="hidden md:flex flex-col -gap-1">
+                            <span class="font-semibold" id="nav-username">Profile</span>
+                            <span class="text-xs text-ios-gray-500" id="nav-user-email">View Profile</span>
+                         </div>
+                    </a>
+                     <a href="#" id="logout-button" class="nav-link text-ios-gray-700 hover:bg-ios-gray-200/50 rounded-xl">
+                         <i data-lucide="log-out"></i> <span class="hidden md:inline">Log Out</span>
+                    </a>
+                </div>
+            </nav>
+
+            <main class="flex-1 overflow-y-auto" id="main-content">
+                
+                <div id="dashboard-content" class="app-page">
+                    <div class="sticky top-0 bg-[#f8f9fc]/80 backdrop-blur-md z-10 pt-2 pb-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <h1 class="text-4xl font-bold tracking-tight" id="dashboard-welcome">Welcome Back!</h1>
+                            <div class="flex items-center gap-3">
+                                <div class="relative hidden sm:block">
+                                    <input type="text" id="dashboard-search-input" placeholder="Search..." class="ios-input w-64 pl-10">
+                                    <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-ios-gray-500"></i>
+                                </div>
+                                <button id="dashboard-filter-button" class="btn-ios rounded-xl p-3">
+                                    <i data-lucide="sliders-horizontal" class="h-5 w-5"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                        <div class="glass p-6 rounded-2xl shadow-ios premium-card" data-aos="fade-up" data-aos-delay="100">
+                            <div class="flex items-center justify-between">
+                                <span class="text-ios-gray-600 text-sm font-medium">Active Policies</span>
+                                <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-ios-blue/20 to-ios-blue/10 flex items-center justify-center">
+                                    <i data-lucide="shield" class="text-ios-blue"></i>
+                                </div>
+                            </div>
+                            <p class="text-4xl font-bold mt-2" id="dashboard-policy-count">0</p>
+                            <div class="flex items-center mt-2 text-sm text-ios-green">
+                                <i data-lucide="trending-up" class="h-4 w-4 mr-1"></i>
+                                <span>+1 from last month</span>
+                            </div>
+                        </div>
+                        <div class="glass p-6 rounded-2xl shadow-ios premium-card" data-aos="fade-up" data-aos-delay="200">
+                            <div class="flex items-center justify-between">
+                                <span class="text-ios-gray-600 text-sm font-medium">Open Claims</span>
+                                <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-ios-orange/20 to-ios-orange/10 flex items-center justify-center">
+                                    <i data-lucide="file-text" class="text-ios-orange"></i>
+                                </div>
+                            </div>
+                            <p class="text-4xl font-bold mt-2" id="dashboard-claim-count">0</p>
+                            <div class="flex items-center mt-2 text-sm text-ios-red">
+                                <i data-lucide="trending-down" class="h-4 w-4 mr-1"></i>
+                                <span>-1 from last month</span>
+                            </div>
+                        </div>
+                        <div class="glass p-6 rounded-2xl shadow-ios premium-card" data-aos="fade-up" data-aos-delay="300">
+                            <div class="flex items-center justify-between">
+                                <span class="text-ios-gray-600 text-sm font-medium">Next Payment Due</span>
+                                <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-ios-green/20 to-ios-green/10 flex items-center justify-center">
+                                    <i data-lucide="calendar" class="text-ios-green"></i>
+                                </div>
+                            </div>
+                            <p class="text-3xl font-bold mt-2" id="dashboard-next-payment">N/A</p>
+                            <div class="flex items-center mt-2 text-sm text-ios-gray-500">
+                                <i data-lucide="clock" class="h-4 w-4 mr-1"></i>
+                                <span id="dashboard-payment-days">-- days remaining</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2 glass p-6 rounded-2xl shadow-ios" data-aos="fade-up" data-aos-delay="400">
+                             <div class="flex items-center justify-between mb-4">
+                                   <h3 class="text-xl font-semibold">Premium Breakdown</h3>
+                                   <span class="text-sm font-medium text-ios-gray-500">Monthly Total</span>
+                               </div>
+                             <div class="h-64 md:h-80 relative">
+                                <canvas id="dashboard-chart"></canvas>
+                             </div>
+                        </div>
+                        <div class="lg:col-span-1" data-aos="fade-up" data-aos-delay="500">
+                            <h3 class="text-xl font-semibold mb-4 ml-1">Quick Actions</h3>
+                            <div class="space-y-4">
+                                <button id="action-file-claim" class="w-full glass p-5 rounded-2xl flex items-center gap-4 text-left shadow-ios hover:shadow-ios-lg transition-all duration-300 premium-card">
+                                    <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-ios-blue/20 to-ios-blue/10 flex items-center justify-center">
+                                        <i data-lucide="file-plus" class="h-6 w-6 text-ios-blue"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-base font-semibold">File a New Claim</span>
+                                        <p class="text-sm text-ios-gray-500">Start a new claim process</p>
+                                    </div>
+                                </button>
+                                <button id="action-download-id" class="w-full glass p-5 rounded-2xl flex items-center gap-4 text-left shadow-ios hover:shadow-ios-lg transition-all duration-300 premium-card">
+                                    <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-ios-green/20 to-ios-green/10 flex items-center justify-center">
+                                        <i data-lucide="contact" class="h-6 w-6 text-ios-green"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-base font-semibold">Download ID Card</span>
+                                        <p class="text-sm text-ios-gray-500">Get your auto ID card</p>
+                                    </div>
+                                </button>
+                                <button id="action-make-payment" class="w-full glass p-5 rounded-2xl flex items-center gap-4 text-left shadow-ios hover:shadow-ios-lg transition-all duration-300 premium-card">
+                                    <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-ios-purple/20 to-ios-purple/10 flex items-center justify-center">
+                                        <i data-lucide="credit-card" class="h-6 w-6 text-ios-purple"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-base font-semibold">Make a Payment</span>
+                                        <p class="text-sm text-ios-gray-500">Pay your monthly premium</p>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 glass p-6 rounded-2xl shadow-ios" data-aos="fade-up" data-aos-delay="600">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-semibold">Recent Activity</h3>
+                            <button class="text-sm font-medium text-ios-blue">View All</button>
+                        </div>
+                        <div id="dashboard-activity-feed" class="space-y-4">
+                            <p class="text-sm text-ios-gray-500">No recent activity.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="policies-content" class="app-page hidden">
+                    <div class="sticky top-0 bg-[#f8f9fc]/80 backdrop-blur-md z-10 pt-2 pb-6">
+                        <div class="flex flex-col md:flex-row justify-between md:items-center mb-8 gap-4">
+                            <h1 class="text-4xl font-bold tracking-tight">Your Policies</h1>
+                            <div class="flex items-center gap-3">
+                                <div class="relative">
+                                    <input type="text" id="policy-search-input" placeholder="Search Policies..." class="ios-input w-64 pl-10">
+                                    <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-ios-gray-500"></i>
+                                </div>
+                                <button id="policies-get-quote" class="flex-shrink-0 flex items-center justify-center gap-2 rounded-xl btn-ios-primary px-5 py-3 text-sm font-semibold leading-6 shadow-lg transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] w-full md:w-auto">
+                                    <i data-lucide="shield-plus" class="h-5 w-5"></i> 
+                                    <span class="hidden sm:inline">Get a New Quote</span>
+                                </button>
+                            </div>
+                        </div>
+                    
+                        <div class="mb-6">
+                            <div class="segmented-control w-full max-w-md">
+                                <div class="segmented-control-indicator" id="policies-filter-indicator"></div>
+                                <div class="segmented-control-option active" data-filter="All">All Policies</div>
+                                <div class="segmented-control-option" data-filter="Active">Active</div>
+                                <div class="segmented-control-option" data-filter="Pending Review">Pending</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="policies-list" class="space-y-6">
+                        <div id="policies-loading" class="text-center py-20 text-ios-gray-500 glass rounded-2xl shadow-ios">
+                            <i data-lucide="loader-2" class="h-10 w-10 animate-spin mx-auto"></i>
+                            <p class="mt-3 text-lg font-medium">Loading policies...</p>
+                        </div>
+                        <div id="policies-empty" class="text-center py-20 text-ios-gray-500 glass rounded-2xl shadow-ios hidden">
+                            <i data-lucide="shield-off" class="h-12 w-12 text-ios-blue mx-auto"></i>
+                            <h3 class="mt-4 text-xl font-semibold text-ios-gray-800">No Policies Found</h3>
+                            <p class="mt-2 text-ios-gray-500">Get a quote to add your first policy.</p>
+                            <button id="empty-policies-quote-btn" class="mt-6 flex items-center mx-auto gap-2 rounded-xl btn-ios-primary px-5 py-3 text-sm font-semibold leading-6 shadow-lg transition-all">
+                                <i data-lucide="shield-plus" class="h-5 w-5"></i> Get a New Quote
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="claims-content" class="app-page hidden">
+                    <div class="sticky top-0 bg-[#f8f9fc]/80 backdrop-blur-md z-10 pt-2 pb-6">
+                        <div class="flex flex-col md:flex-row justify-between md:items-center mb-8 gap-4">
+                            <h1 class="text-4xl font-bold tracking-tight">Your Claims</h1>
+                            <div class="flex items-center gap-3">
+                                <div class="relative">
+                                    <input type="text" id="claim-search-input" placeholder="Search Claims..." class="ios-input w-64 pl-10">
+                                    <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-ios-gray-500"></i>
+                                </div>
+                                <button id="claims-file-new" class="flex-shrink-0 flex items-center justify-center gap-2 rounded-xl btn-ios-primary px-5 py-3 text-sm font-semibold leading-6 shadow-lg transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] w-full md:w-auto">
+                                    <i data-lucide="file-plus" class="h-5 w-5"></i> 
+                                    <span class="hidden sm:inline">File a New Claim</span>
+                                </button>
+                            </div>
+                        </div>
+                    
+                        <div class="mb-6">
+                            <div class="segmented-control w-full max-w-lg">
+                                <div class="segmented-control-indicator" id="claims-filter-indicator" style="width: calc(25% - 4px);"></div>
+                                <div class="segmented-control-option active" data-filter="All">All Claims</div>
+                                <div class="segmented-control-option" data-filter="Under Review">Under Review</div>
+                                <div class="segmented-control-option" data-filter="Approved">Approved</div>
+                                <div class="segmented-control-option" data-filter="Denied">Denied</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="claims-list" class="space-y-6">
+                        <div id="claims-loading" class="text-center py-20 text-ios-gray-500 glass rounded-2xl shadow-ios">
+                            <i data-lucide="loader-2" class="h-10 w-10 animate-spin mx-auto"></i>
+                            <p class="mt-3 text-lg font-medium">Loading claims...</p>
+                        </div>
+                        <div id="claims-empty" class="text-center py-20 text-ios-gray-500 glass rounded-2xl shadow-ios hidden">
+                            <i data-lucide="file-x" class="h-12 w-12 text-ios-blue mx-auto"></i>
+                            <h3 class="mt-4 text-xl font-semibold text-ios-gray-800">You Have No Claims</h3>
+                            <p class="mt-2 text-ios-gray-500">File a new claim to get started.</p>
+                            <button id="empty-claims-file-btn" class="mt-6 flex items-center mx-auto gap-2 rounded-xl btn-ios-primary px-5 py-3 text-sm font-semibold leading-6 shadow-lg transition-all">
+                                <i data-lucide="file-plus" class="h-5 w-5"></i> File a New Claim
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="ai-agent-content" class="app-page hidden h-full flex flex-col">
+                    <div class="sticky top-0 bg-[#f8f9fc]/80 backdrop-blur-md z-10 pt-2 pb-6">
+                        <h1 class="text-4xl font-bold tracking-tight mb-4">AI Agent</h1>
+                        <p class="text-ios-gray-600">Ask me anything about your policies, claims, or general insurance questions.</p>
+                    </div>
+                    <div class="glass rounded-2xl shadow-ios flex-1 flex flex-col min-h-0">
+                        <div id="ai-chat-messages" class="flex-1 p-6 space-y-4 overflow-y-auto">
+                            <div class="flex justify-start">
+                                <div class="chat-bubble-ai p-3 rounded-xl max-w-lg">
+                                    Hello! I'm your AI assistant. How can I help you today?
+                                </div>
+                            </div>
+                            <div id="ai-suggested-prompts" class="flex flex-wrap gap-2 pt-4">
+                                <button class="ai-prompt-button">Summarize my coverage</button>
+                                <button class="ai-prompt-button">What's my auto premium?</button>
+                                <button class="ai-prompt-button">When is my next payment due?</button>
+                            </div>
+                        </div>
+                        <form id="ai-chat-form" class="p-6 border-t border-ios-gray-200/60">
+                            <div class="flex items-center gap-4">
+                                <input id="ai-chat-input" type="text" placeholder="Type your message..." class="ios-input flex-1" autocomplete="off">
+                                <button type="submit" class="p-3 rounded-xl btn-ios-primary transition-all active:scale-95 flex-shrink-0">
+                                    <i data-lucide="send" class="h-5 w-5"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="notifications-content" class="app-page hidden">
+                    <div class="sticky top-0 bg-[#f8f9fc]/80 backdrop-blur-md z-10 pt-2 pb-6">
+                        <h1 class="text-4xl font-bold tracking-tight mb-8">Notifications</h1>
+                    </div>
+                    <div class="glass rounded-2xl shadow-ios p-8 max-w-3xl mx-auto">
+                        <div id="notifications-list" class="space-y-6">
+                            <div id="notifications-loading" class="text-center py-10 text-ios-gray-500">
+                                <i data-lucide="loader-2" class="h-8 w-8 animate-spin mx-auto"></i>
+                                <p class="mt-2">Loading notifications...</p>
+                            </div>
+                            <div id="notifications-empty" class="text-center py-10 text-ios-gray-500 hidden">
+                                <i data-lucide="bell-off" class="h-10 w-10 text-ios-gray-400 mx-auto"></i>
+                                <p class="mt-3 text-lg">You have no new notifications.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="documents-content" class="app-page hidden">
+                    <div class="sticky top-0 bg-[#f8f9fc]/80 backdrop-blur-md z-10 pt-2 pb-6">
+                        <h1 class="text-4xl font-bold tracking-tight mb-8">Document Center</h1>
+                    </div>
+                    <div id="documents-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div id="documents-empty" class="text-center py-20 text-ios-gray-500 glass rounded-2xl shadow-ios hidden md:col-span-3">
+                            <i data-lucide="folder-x" class="h-10 w-10 text-ios-gray-400 mx-auto"></i>
+                            <p class="mt-3 text-lg">Your document center is empty.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="profile-content" class="app-page hidden">
+                    <div class="sticky top-0 bg-[#f8f9fc]/80 backdrop-blur-md z-10 pt-2 pb-6">
+                        <h1 class="text-4xl font-bold tracking-tight mb-8">Your Profile</h1>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="md:col-span-2 glass rounded-2xl shadow-ios p-8">
+                            <form id="profile-form" class="space-y-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-ios-gray-700">Full Name</label>
+                                    <input id="profile-name" type="text" class="ios-input w-full mt-2">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-ios-gray-700">Email Address</label>
+                                    <input id="profile-email" type="email" disabled class="ios-input w-full mt-2 bg-ios-gray-200 cursor-not-allowed">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-ios-gray-700">Mailing Address</label>
+                                    <input id="profile-address" type="text" placeholder="123 Main St, Anytown, USA 12345" class="ios-input w-full mt-2">
+                                </div>
+                                <div class="pt-4">
+                                    <button type="submit" class="rounded-xl btn-ios-primary px-5 py-3 text-sm font-semibold shadow-md transition-all active:scale-95">
+                                        Save Changes
+                                    </button>
+                                    <span id="profile-save-success" class="ml-4 text-ios-green hidden">Profile saved!</span>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="md:col-span-1 space-y-6">
+                            <div class="glass rounded-2xl shadow-ios p-6 flex flex-col items-center">
+                                <div id="profile-avatar" class="h-24 w-24 rounded-full bg-gradient-to-br from-ios-purple to-ios-pink text-white flex items-center justify-center font-semibold text-4xl mb-4">
+                                    M
+                                </div>
+                                <h3 id="profile-avatar-name" class="text-xl font-semibold">Mazen</h3>
+                                <p id="profile-avatar-email" class="text-sm text-ios-gray-500">mazen@icloud.com</p>
+                                <button class="mt-4 text-sm font-medium text-ios-blue">Change Photo</button>
+                            </div>
+                            <div class="glass rounded-2xl shadow-ios p-6 space-y-4">
+                                <h3 class="text-lg font-semibold">Account Details</h3>
+                                <div class="text-sm">
+                                    <span class="font-medium text-ios-gray-700">Member Since</span>
+                                    <p id="profile-member-since" class="font-semibold text-gray-900">...</p>
+                                </div>
+                                <div class="text-sm">
+                                    <span class="font-medium text-ios-gray-700">Phone Number</span>
+                                    <p id="profile-phone" class="font-semibold text-gray-900">...</p>
+                                </div>
+                                <div class="text-sm">
+                                    <span class="font-medium text-ios-gray-700">Plan Type</span>
+                                    <p id="profile-plan" class="font-semibold text-gray-900">...</p>
+                                </div>
+                            </div>
+                            <div class="glass rounded-2xl shadow-ios p-6 space-y-5">
+                                <h3 class="text-lg font-semibold">Settings</h3>
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <label class="block text-sm font-medium text-ios-gray-700">Push Notifications</label>
+                                        <p class="text-sm text-ios-gray-500">Receive policy alerts</p>
+                                    </div>
+                                    <label class="ios-toggle">
+                                        <input type="checkbox" checked>
+                                        <span class="ios-toggle-slider"></span>
+                                    </label>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <label class="block text-sm font-medium text-ios-gray-700">Biometric Login</label>
+                                        <p class="text-sm text-ios-gray-500">Use Face ID / Touch ID</p>
+                                    </div>
+                                    <label class="ios-toggle">
+                                        <input type="checkbox">
+                                        <span class="ios-toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="billing-content" class="app-page hidden">
+                    <div class="sticky top-0 bg-[#f8f9fc]/80 backdrop-blur-md z-10 pt-2 pb-6">
+                        <h1 class="text-4xl font-bold tracking-tight mb-8">Billing & Payments</h1>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="glass rounded-2xl shadow-ios p-8">
+                            <div class="flex items-center justify-between pb-6 border-b border-ios-gray-200/60">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-ios-gray-900">Autopay</h3>
+                                    <p class="text-sm text-ios-gray-500">Your payments will be made automatically.</p>
+                                </div>
+                                <label class="ios-toggle">
+                                    <input type="checkbox" checked>
+                                    <span class="ios-toggle-slider"></span>
+                                </label>
+                            </div>
+                            <h2 class="text-xl font-semibold my-6">Payment Methods</h2>
+                            <div id="billing-payment-methods" class="space-y-3">
+                            </div>
+                            <button class="text-sm font-semibold text-ios-blue hover:text-blue-500 transition-colors mt-4 flex items-center gap-1">
+                                <i data-lucide="plus" class="h-4 w-4"></i> Add New Method
+                            </button>
+                        </div>
+                        <div class="glass rounded-2xl shadow-ios p-8">
+                            <h2 class="text-xl font-semibold mb-6">Payment History</h2>
+                            <ul class="space-y-3" id="billing-payment-history">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- 
+      SECTION 3: MODALS
+    -->
+    <div id="modal-backdrop" class="fixed inset-0 bg-black/40 backdrop-blur-lg z-40 hidden transition-opacity duration-300 opacity-0"></div>
+
+    <div id="message-box" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md glass p-6 rounded-2xl shadow-ios-lg z-50 hidden transition-all duration-300 opacity-0 scale-95">
+        <h3 id="message-box-title" class="text-lg font-medium leading-6 text-gray-900">Message</h3>
+        <div class="mt-2">
+            <p id="message-box-text" class="text-sm text-ios-gray-500">Your message here.</p>
+        </div>
+        <div class="mt-4 flex justify-end">
+            <button id="message-box-ok" type="button" class="rounded-xl btn-ios-primary px-4 py-2 text-sm font-medium">
+                OK
+            </button>
+        </div>
+    </div>
+
+    <div id="claim-modal" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl glass p-8 rounded-2xl shadow-ios-lg z-50 hidden transition-all duration-300 opacity-0 scale-95">
+        <h3 class="text-2xl font-semibold text-gray-900 mb-6">File a New Claim</h3>
+        <form id="claim-form">
+            <div id="claim-step-1" class="claim-step">
+                <label for="claim-policy-id" class="block text-sm font-medium text-ios-gray-700 mb-4">Which policy is this claim for?</label>
+                <div id="claim-policy-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                </div>
+                <div id="claim-step-1-error" class="text-sm text-ios-red hidden mt-4"></div>
+                <div class="flex justify-end gap-4 mt-8">
+                    <button id="claim-modal-cancel" type="button" class="modal-cancel-btn">Cancel</button>
+                    <button id="claim-step-1-next" type="button" class="modal-next-btn">Next</button>
+                </div>
+            </div>
+            
+            <div id="claim-step-2" class="claim-step hidden">
+                <h4 class="text-lg font-medium text-ios-gray-800 mb-4">Incident Details</h4>
+                <div class="space-y-6">
+                    <div>
+                        <label for="claim-incident-date" class="block text-sm font-medium text-ios-gray-700">Incident Date</label>
+                        <input id="claim-incident-date" name="incidentDate" type="date" required class="ios-input w-full">
+                    </div>
+                    <div>
+                        <label for="claim-description" class="block text-sm font-medium text-ios-gray-700">Description of Incident</label>
+                        <textarea id="claim-description" name="description" rows="4" required placeholder="Please describe what happened..." class="ios-input w-full"></textarea>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-4 mt-8">
+                    <button id="claim-step-2-back" type="button" class="modal-back-btn">Back</button>
+                    <button id="claim-step-2-next" type="button" class="modal-next-btn">Next</button>
+                </div>
+            </div>
+            
+            <div id="claim-step-3" class="claim-step hidden">
+                <h4 class="text-lg font-medium text-ios-gray-800 mb-4">Review Your Claim</h4>
+                <div class="space-y-3 p-4 bg-ios-gray-100 rounded-lg">
+                    <div class="flex justify-between">
+                        <span class="text-ios-gray-600">Policy:</span>
+                        <span id="review-claim-policy" class="font-semibold text-right"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-ios-gray-600">Incident Date:</span>
+                        <span id="review-claim-date" class="font-semibold text-right"></span>
+                    </div>
+                    <div>
+                        <span class="text-ios-gray-600">Description:</span>
+                        <p id="review-claim-desc" class="font-semibold mt-1"></p>
+                    </div>
+                </div>
+                <div id="claim-form-error" class="text-sm text-ios-red hidden mt-4"></div>
+                <div class="flex justify-end gap-4 mt-8">
+                    <button id="claim-step-3-back" type="button" class="modal-back-btn">Back</button>
+                    <button type="submit" class="modal-submit-btn">
+                        <span class="button-text">Submit Claim</span>
+                        <i data-lucide="loader-2" class="spinner button-loader h-5 w-5 hidden"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div id="quote-modal" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg glass p-8 rounded-2xl shadow-ios-lg z-50 hidden transition-all duration-300 opacity-0 scale-95">
+        <h3 class="text-2xl font-semibold text-gray-900 mb-6">Get a New Quote</h3>
+        <form id="quote-form" class="space-y-6">
+            <div>
+                <label for="quote-policy-type" class="block text-sm font-medium text-ios-gray-700">Policy Type</label>
+                <select id="quote-policy-type" name="policyType" class="ios-input w-full">
+                    <option value="Auto">Auto Insurance</option>
+                    <option value="Home">Homeowner's Insurance</option>
+                    <option value="Renter">Renter's Insurance</option>
+                    <option value="Life">Life Insurance</option>
+                </select>
+            </div>
+            <div id="quote-auto-fields" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-ios-gray-700">Vehicle Year, Make, Model</label>
+                    <input type="text" placeholder="e.g., 2023 Tesla Model 3" class="ios-input w-full">
+                </div>
+            </div>
+            <div id="quote-home-fields" class="space-y-4 hidden">
+                 <div>
+                    <label class="block text-sm font-medium text-ios-gray-700">Property Address</label>
+                    <input type="text" placeholder="123 Main St" class="ios-input w-full">
+                </div>
+            </div>
+            <div id="quote-form-error" class="text-sm text-ios-red hidden"></div>
+            <div class="flex justify-end gap-4">
+                <button id="quote-modal-cancel" type="button" class="modal-cancel-btn">Cancel</button>
+                <button type="submit" class="modal-submit-btn">
+                    <span class="button-text">Request Quote</span>
+                    <i data-lucide="loader-2" class="spinner button-loader h-5 w-5 hidden"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div id="policy-details-modal" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl glass p-8 rounded-2xl shadow-ios-lg z-50 hidden transition-all duration-300 opacity-0 scale-95">
+        <h3 id="policy-details-title" class="text-2xl font-semibold text-gray-900 mb-6">Policy Details</h3>
+        <div id="policy-details-content" class="space-y-4 text-ios-gray-600">
+        </div>
+        <div class="flex justify-end gap-4 mt-8">
+            <button id="policy-details-close" type="button" class="modal-submit-btn">Close</button>
+        </div>
+    </div>
+    
+    <div id="track-claim-modal" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl glass p-8 rounded-2xl shadow-ios-lg z-50 hidden transition-all duration-300 opacity-0 scale-95">
+        <h3 id="track-claim-title" class="text-2xl font-semibold text-gray-900 mb-8">Track Claim Status</h3>
+        <div class="flex items-start w-full px-4">
+            <div id="step-submitted" class="stepper-item">
+                <div class="stepper-item-line"></div>
+                <div class="stepper-item-icon"><i data-lucide="check"></i></div>
+                <div class="text-sm font-medium mt-2 text-center">Submitted</div>
+            </div>
+            <div id="step-review" class="stepper-item">
+                <div class="stepper-item-line"></div>
+                <div class="stepper-item-icon"><i data-lucide="search"></i></div>
+                <div class="text-sm font-medium mt-2 text-center">In Review</div>
+            </div>
+            <div id="step-decision" class="stepper-item">
+                <div class="stepper-item-line"></div>
+                <div class="stepper-item-icon"><i data-lucide="check-check"></i></div>
+                <div class="text-sm font-medium mt-2 text-center">Decision</div>
+            </div>
+        </div>
+        <p id="track-claim-status-text" class="text-center text-ios-gray-600 mt-6 font-medium"></p>
+        <div class="flex justify-end gap-4 mt-8">
+            <button id="track-claim-close" type="button" class="modal-submit-btn">Close</button>
+        </div>
+    </div>
+
+    <!-- 
+      SECTION 4: JAVASCRIPT
+    -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            signInWithEmailAndPassword,
+            createUserWithEmailAndPassword,
+            signOut,
+            onAuthStateChanged,
+            signInWithCustomToken,
+            signInAnonymously,
+            sendPasswordResetEmail
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            getDoc, 
+            setDoc, 
+            updateDoc, 
+            addDoc, 
+            collection, 
+            query, 
+            onSnapshot,
+            Timestamp,
+            setLogLevel,
+            orderBy,
+            where
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        
+        let app, auth, db;
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+            setLogLevel('Debug');
+            console.log("Firebase Initialized Successfully.");
+        } catch (e) {
+            console.error("Firebase initialization error (this is expected in demo mode):", e);
+        }
+
+        let currentUserId = null;
+        let localProfile = {};
+        let localPolicies = [];
+        let localClaims = [];
+        let localNotifications = [];
+        let unsubscribeListeners = [];
+        let authViewState = 'login';
+        let currentClaimData = {};
+        let currentClaimStep = 1;
+        let dashboardChartInstance = null;
+
+        const $ = (selector) => document.querySelector(selector);
+        const $$ = (selector) => document.querySelectorAll(selector);
+
+        $$('.modal-cancel-btn').forEach(el => el.classList.add('rounded-xl', 'btn-ios', 'px-5', 'py-3', 'text-sm', 'font-semibold', 'text-ios-gray-700', 'transition-all', 'active:scale-95'));
+        $$('.modal-next-btn').forEach(el => el.classList.add('rounded-xl', 'btn-ios-primary', 'px-5', 'py-3', 'text-sm', 'font-semibold', 'shadow-md', 'transition-all', 'active:scale-95'));
+        $$('.modal-back-btn').forEach(el => el.classList.add('rounded-xl', 'btn-ios', 'px-5', 'py-3', 'text-sm', 'font-semibold', 'text-ios-gray-700', 'transition-all', 'active:scale-95'));
+        $$('.modal-submit-btn').forEach(el => el.classList.add('rounded-xl', 'btn-ios-primary', 'px-5', 'py-3', 'text-sm', 'font-semibold', 'shadow-md', 'transition-all', 'active:scale-95', 'flex', 'items-center', 'justify-center', 'gap-2', 'disabled:opacity-75'));
+        $$('.ai-prompt-button').forEach(el => el.classList.add('bg-ios-gray-100', 'hover:bg-ios-gray-200', 'text-ios-blue', 'font-medium', 'py-2', 'px-3', 'rounded-lg', 'text-sm', 'transition-all'));
+
+
+        const views = { auth: $("#auth-view"), app: $("#app-view") };
+        const authForm = {
+            form: $("#auth-form"),
+            title: $("#auth-title"),
+            subtitle: $("#auth-subtitle"),
+            nameField: $("#name-field-group"),
+            emailField: $("#email-field-group"),
+            passwordField: $("#password-field-group"),
+            email: $("#email"),
+            password: $("#password"),
+            submitButton: $("#auth-submit-button"),
+            toggleText: $("#auth-toggle-text"),
+            toggleLink: $("#auth-toggle-link"),
+            forgotLink: $("#forgot-password-link"),
+            message: $("#auth-message")
+        };
+        const appNav = {
+            links: $$(".nav-link"),
+            logoutButton: $("#logout-button"),
+            avatar: $("#nav-avatar"),
+            username: $("#nav-username"),
+            userEmail: $("#nav-user-email"),
+            notificationDot: $("#nav-notification-dot")
+        };
+        const appPages = { all: $$(".app-page") };
+        const dashboard = {
+            welcome: $("#dashboard-welcome"),
+            policyCount: $("#dashboard-policy-count"),
+            claimCount: $("#dashboard-claim-count"),
+            nextPayment: $("#dashboard-next-payment"),
+            paymentDays: $("#dashboard-payment-days"),
+            chart: $("#dashboard-chart"),
+            activityFeed: $("#dashboard-activity-feed"),
+            actionFileClaim: $("#action-file-claim"),
+            actionGetQuote: $("#policies-get-quote"),
+            actionDownloadId: $("#action-download-id"),
+            actionMakePayment: $("#action-make-payment"),
+            search: $("#dashboard-search-input"),
+            filterButton: $("#dashboard-filter-button")
+        };
+        const policiesPage = {
+            list: $("#policies-list"),
+            loading: $("#policies-loading"),
+            empty: $("#policies-empty"),
+            emptyButton: $("#empty-policies-quote-btn"),
+            getQuoteButton: $("#policies-get-quote"),
+            filterIndicator: $("#policies-filter-indicator"),
+            filterOptions: $$("#policies-content .segmented-control-option"),
+            search: $("#policy-search-input")
+        };
+        const claimsPage = {
+            list: $("#claims-list"),
+            loading: $("#claims-loading"),
+            empty: $("#claims-empty"),
+            emptyButton: $("#empty-claims-file-btn"),
+            fileNewButton: $("#claims-file-new"),
+            filterIndicator: $("#claims-filter-indicator"),
+            filterOptions: $$("#claims-content .segmented-control-option"),
+            search: $("#claim-search-input")
+        };
+        const aiAgentPage = {
+            form: $("#ai-chat-form"),
+            input: $("#ai-chat-input"),
+            messages: $("#ai-chat-messages"),
+            suggestedPrompts: $("#ai-suggested-prompts")
+        };
+        const notificationsPage = {
+            list: $("#notifications-list"),
+            loading: $("#notifications-loading"),
+            empty: $("#notifications-empty")
+        };
+        const documentsPage = {
+            list: $("#documents-list"),
+            empty: $("#documents-empty")
+        };
+        const profilePage = {
+            form: $("#profile-form"),
+            name: $("#profile-name"),
+            email: $("#profile-email"),
+            address: $("#profile-address"),
+            saveSuccess: $("#profile-save-success"),
+            avatar: $("#profile-avatar"),
+            avatarName: $("#profile-avatar-name"),
+            avatarEmail: $("#profile-avatar-email"),
+            memberSince: $("#profile-member-since"),
+            phone: $("#profile-phone"),
+            plan: $("#profile-plan")
+        };
+        const billingPage = {
+            paymentMethods: $("#billing-payment-methods"),
+            paymentHistory: $("#billing-payment-history")
+        };
+        const modals = {
+            backdrop: $("#modal-backdrop"),
+            messageBox: { box: $("#message-box"), title: $("#message-box-title"), text: $("#message-box-text"), ok: $("#message-box-ok") },
+            claim: {
+                box: $("#claim-modal"),
+                form: $("#claim-form"),
+                cancel: $("#claim-modal-cancel"),
+                policyList: $("#claim-policy-list"),
+                steps: $$(".claim-step"),
+                step1Error: $("#claim-step-1-error"),
+                step1Next: $("#claim-step-1-next"),
+                step2Back: $("#claim-step-2-back"),
+                step2Next: $("#claim-step-2-next"),
+                step3Back: $("#claim-step-3-back"),
+                reviewPolicy: $("#review-claim-policy"),
+                reviewDate: $("#review-claim-date"),
+                reviewDesc: $("#review-claim-desc"),
+                error: $("#claim-form-error")
+            },
+            quote: {
+                box: $("#quote-modal"),
+                form: $("#quote-form"),
+                typeSelect: $("#quote-policy-type"),
+                autoFields: $("#quote-auto-fields"),
+                homeFields: $("#quote-home-fields"),
+                error: $("#quote-form-error"),
+                cancel: $("#quote-modal-cancel")
+            },
+            policyDetails: { box: $("#policy-details-modal"), content: $("#policy-details-content"), close: $("#policy-details-close") },
+            trackClaim: {
+                box: $("#track-claim-modal"),
+                title: $("#track-claim-title"),
+                statusText: $("#track-claim-status-text"),
+                stepSubmitted: $("#step-submitted"),
+                stepReview: $("#step-review"),
+                stepDecision: $("#step-decision"),
+                close: $("#track-claim-close")
+            }
+        };
+
+        function customAlert(title, text) {
+            modals.messageBox.title.textContent = title;
+            modals.messageBox.text.textContent = text;
+            openModal("messageBox");
+        }
+
+        function openModal(modalId) {
+            if (modals[modalId]) {
+                const modal = modals[modalId].box;
+                modals.backdrop.classList.remove("hidden");
+                modal.classList.remove("hidden");
+                
+                setTimeout(() => {
+                    modals.backdrop.classList.add("opacity-100");
+                    modal.classList.add("opacity-100", "scale-100");
+                    modal.classList.remove("opacity-0", "scale-95");
+                }, 10);
+            }
+        }
+
+        function closeModal() {
+            modals.backdrop.classList.remove("opacity-100");
+            
+            Object.values(modals).forEach(modal => {
+                if (modal.box) {
+                    modal.box.classList.remove("opacity-100", "scale-100");
+                    modal.box.classList.add("opacity-0", "scale-95");
+                }
+            });
+
+            setTimeout(() => {
+                modals.backdrop.classList.add("hidden");
+                Object.values(modals).forEach(modal => {
+                    if (modal.box) modal.box.classList.add("hidden");
+                });
+            }, 300);
+        }
+        
+        function formatDate(timestamp) {
+            if (!timestamp) return "N/A";
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+        }
+        
+        function formatCurrency(amount) {
+            if (amount === null || amount === undefined) return "N/A";
+            return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+        }
+
+        function showMessage(element, message, isError = true) {
+            element.textContent = message;
+            element.classList.toggle("text-ios-red", isError);
+            element.classList.toggle("text-ios-green", !isError);
+            element.classList.remove("hidden");
+        }
+
+        function hideMessage(element) {
+            element.textContent = "";
+            element.classList.add("hidden");
+        }
+        
+        function toggleButtonSpinner(button, show) {
+            const text = button.querySelector('.button-text');
+            const loader = button.querySelector('.button-loader');
+            if (show) {
+                if (text) text.classList.add('hidden');
+                if (loader) loader.classList.remove('hidden');
+                button.disabled = true;
+            } else {
+                if (text) text.classList.remove('hidden');
+                if (loader) loader.classList.add('hidden');
+                button.disabled = false;
+            }
+        }
+
+        function setAuthViewState(state) {
+            authViewState = state;
+            hideMessage(authForm.message);
+            authForm.password.value = "";
+
+            authForm.nameField.classList.toggle("hidden", state !== 'signup');
+            authForm.passwordField.classList.toggle("hidden", state === 'reset');
+            authForm.forgotLink.classList.toggle("hidden", state !== 'login');
+            
+            if (state === 'login') {
+                authForm.title.textContent = "Sign In";
+                authForm.subtitle.textContent = "to your InsureManage Pro account";
+                authForm.submitButton.querySelector('.button-text').textContent = "Sign In";
+                authForm.toggleText.textContent = "Don't have an account?";
+                authForm.toggleLink.textContent = "Create one now.";
+                authForm.email.placeholder = "Email Address";
+            } else if (state === 'signup') {
+                authForm.title.textContent = "Create Account";
+                authForm.subtitle.textContent = "Get started with InsureManage Pro";
+                authForm.submitButton.querySelector('.button-text').textContent = "Create Account";
+                authForm.toggleText.textContent = "Already have an account?";
+                authForm.toggleLink.textContent = "Sign In";
+                authForm.email.placeholder = "Email Address";
+            } else if (state === 'reset') {
+                authForm.title.textContent = "Reset Password";
+                authForm.subtitle.textContent = "Enter your email to get a reset link";
+                authForm.submitButton.querySelector('.button-text').textContent = "Send Reset Link";
+                authForm.toggleText.textContent = "Remembered your password?";
+                authForm.toggleLink.textContent = "Sign In";
+                authForm.email.placeholder = "Email Address";
+            }
+        }
+        
+        function handleAuthToggle(e) {
+            e.preventDefault();
+            if (authViewState === 'login') setAuthViewState('signup');
+            else setAuthViewState('login');
+        }
+        
+        function handleForgotLink(e) {
+            e.preventDefault();
+            setAuthViewState('reset');
+        }
+        
+        async function handleAuthSubmit(e) {
+            e.preventDefault();
+            const name = authForm.nameField.querySelector('input').value;
+            const email = authForm.email.value;
+            const password = authForm.password.value;
+
+            toggleButtonSpinner(authForm.submitButton, true);
+            hideMessage(authForm.message);
+
+            try {
+                if (authViewState === 'login') {
+                    if (email === 'mazen@icloud.com' && password === 'mazen1234') {
+                        await new Promise(res => setTimeout(res, 1000));
+                        
+                        currentUserId = 'mazen-demo-user';
+                        views.app.classList.remove("hidden");
+                        views.auth.classList.add("hidden");
+                        
+                        localProfile = { 
+                            name: "Mazen", 
+                            email: "mazen@icloud.com", 
+                            address: "123 Apple Rd, Cupertino, CA",
+                            memberSince: Timestamp.fromDate(new Date("2023-01-15")),
+                            phone: "+1 (555) 123-4567",
+                            planType: "Pro (Family)"
+                        };
+                        
+                        localPolicies = [
+                            { id: 'p1', type: "Auto", policyId: `AU-123456`, status: "Active", premium: 180.50, details: "2024 Porsche 911, Full Coverage", nextPaymentDue: Timestamp.fromDate(new Date("2025-12-01")) },
+                            { id: 'p2', type: "Home", policyId: `HO-654321`, status: "Active", premium: 350.00, details: "123 Apple Rd, Cupertino. $1.5M Coverage", nextPaymentDue: Timestamp.fromDate(new Date("2025-12-01")) },
+                            { id: 'p3', type: "Life", policyId: `LI-789012`, status: "Pending Review", premium: 75.00, details: "$1M Term Life", nextPaymentDue: null }
+                        ];
+                        localClaims = [
+                            { id: 'c1', type: "Auto Accident", claimId: `CL-987654`, status: "Under Review", filedDate: Timestamp.fromDate(new Date("2025-11-01")), description: "Minor scratch in parking lot.", policyId: "AU-123456", policyDocId: "p1" }
+                        ];
+                        localNotifications = [
+                            { id: 'n1', date: Timestamp.now(), text: "Welcome back, Mazen! Your dashboard is ready.", read: false, icon: "sparkles", iconColor: "text-ios-purple" },
+                            { id: 'n2', date: Timestamp.fromDate(new Date("2025-11-02")), text: "Your auto policy AU-123456 is now active.", read: true, icon: "shield-check", iconColor: "text-ios-green" }
+                        ];
+                        const localBilling = [ { type: "Card", provider: "Apple Card", last4: "1234", expiry: "12/28" } ];
+                        const localPayments = [
+                            { date: Timestamp.fromDate(new Date("2025-11-01")), amount: 180.50, description: "Auto Policy Payment" },
+                            { date: Timestamp.fromDate(new Date("2025-11-01")), amount: 350.00, description: "Home Policy Payment" }
+                        ];
+                        
+                        renderProfile(localProfile);
+                        renderPolicies(localPolicies);
+                        renderClaims(localClaims);
+                        renderNotifications(localNotifications);
+                        renderBillingMethods(localBilling);
+                        renderPaymentHistory(localPayments);
+                        renderDocuments();
+                        renderDashboardChart(localPolicies);
+                        updateDashboard();
+                        
+                        navigateToPage("dashboard");
+                        
+                        // Dispatch custom event to setup filters *after* data is loaded
+                        document.dispatchEvent(new Event('dataLoaded'));
+
+                    } else {
+                        await new Promise(res => setTimeout(res, 500));
+                        throw new Error("Invalid credentials. Please try again.");
+                    }
+
+                } else if (authViewState === 'signup') {
+                    await new Promise(res => setTimeout(res, 500));
+                    throw new Error("Account creation is disabled in this demo.");
+                    
+                } else if (authViewState === 'reset') {
+                    await new Promise(res => setTimeout(res, 500));
+                    showMessage(authForm.message, "Password reset link sent! (Demo)", false);
+                }
+            } catch (error) {
+                console.error("Auth error:", error);
+                showMessage(authForm.message, error.message.replace("Firebase: ", ""));
+            } finally {
+                toggleButtonSpinner(authForm.submitButton, false);
+            }
+        }
+        
+        async function handleLogout(e) {
+            if (e) e.preventDefault();
+            currentUserId = null;
+            localPolicies = [];
+            localClaims = [];
+            localNotifications = [];
+            localProfile = {};
+            
+            views.app.classList.add("hidden");
+            views.auth.classList.remove("hidden");
+            authForm.form.reset();
+            setAuthViewState('login');
+        }
+        
+        function setupAuthListener() {
+            if (!auth) return;
+            onAuthStateChanged(auth, (user) => {
+                if (user && !user.isAnonymous) {
+                    if (currentUserId === 'mazen-demo-user') return;
+                    
+                    currentUserId = user.uid;
+                    views.app.classList.remove("hidden");
+                    views.auth.classList.add("hidden");
+                    attachDataListeners(currentUserId);
+                    navigateToPage("dashboard");
+                } else {
+                    if (currentUserId === 'mazen-demo-user') return;
+
+                    currentUserId = null;
+                    views.app.classList.add("hidden");
+                    views.auth.classList.remove("hidden");
+                    detachDataListeners();
+                    authForm.form.reset();
+                    setAuthViewState('login');
+                }
+            });
+        }
+        
+        async function initialAuth() {
+            console.log("Skipping initial auth, waiting for user login.");
+        }
+        
+        function attachDataListeners(uid) {
+            console.log(`Attaching REAL data listeners for user ${uid}`);
+            
+            detachDataListeners();
+            const paths = ["policies", "claims", "billing", "paymentHistory", "notifications"];
+            paths.forEach(path => {
+                const colRef = collection(db, `artifacts/${appId}/users/${uid}/${path}`);
+                let q = query(colRef);
+                if (path === 'notifications' || path === 'paymentHistory') {
+                    q = query(colRef, orderBy("date", "desc"));
+                }
+
+                const unsub = onSnapshot(q, (querySnapshot) => {
+                    const data = querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+                    switch (path) {
+                        case "policies": localPolicies = data; renderPolicies(data); updateDashboard(); populateClaimPolicyList(); renderDashboardChart(data); break;
+                        case "claims": localClaims = data; renderClaims(data); updateDashboard(); renderActivityFeed(); break;
+                        case "billing": renderBillingMethods(data); break;
+                        case "paymentHistory": renderPaymentHistory(data); break;
+                        case "notifications": localNotifications = data; renderNotifications(data); renderActivityFeed(); break;
+                    }
+                    document.dispatchEvent(new Event('dataLoaded'));
+                }, (error) => console.error(`Error listening to ${path}:`, error));
+                unsubscribeListeners.push(unsub);
+            });
+            
+            const profileRef = doc(db, `artifacts/${appId}/users/${uid}/profile/data`);
+            const profileUnsub = onSnapshot(profileRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    localProfile = docSnap.data();
+                    renderProfile(localProfile);
+                }
+            }, (error) => console.error("Error listening to profile:", error));
+            unsubscribeListeners.push(profileUnsub);
+            renderDocuments();
+        }
+        
+        function detachDataListeners() {
+            unsubscribeListeners.forEach(unsub => unsub());
+            unsubscribeListeners = [];
+            console.log("All data listeners detached.");
+        }
+        
+        function renderProfile(data) {
+            if (!data) return;
+            const firstName = data.name ? data.name.split(' ')[0] : 'User';
+            const initial = data.name ? data.name.charAt(0).toUpperCase() : 'U';
+            
+            dashboard.welcome.textContent = `Welcome Back, ${firstName}!`;
+            profilePage.name.value = data.name || "";
+            profilePage.email.value = data.email || "";
+            profilePage.address.value = data.address || "";
+            
+            appNav.username.textContent = data.name || "Profile";
+            appNav.userEmail.textContent = data.email || "View Profile";
+            appNav.avatar.textContent = initial;
+
+            profilePage.avatar.textContent = initial;
+            profilePage.avatarName.textContent = data.name || "User";
+            profilePage.avatarEmail.textContent = data.email || "";
+
+            profilePage.memberSince.textContent = data.memberSince ? formatDate(data.memberSince) : "N/A";
+            profilePage.phone.textContent = data.phone || "Not set";
+            profilePage.plan.textContent = data.planType || "Standard";
+        }
+        
+        function updateDashboard() {
+            const activePolicies = localPolicies.filter(p => p.status === "Active");
+            const openClaims = localClaims.filter(c => c.status === "Under Review");
+            
+            dashboard.policyCount.textContent = activePolicies.length;
+            dashboard.claimCount.textContent = openClaims.length;
+            
+            const upcomingPayments = activePolicies
+                .map(p => p.nextPaymentDue)
+                .filter(Boolean)
+                .sort((a, b) => a.toDate() - b.toDate());
+            
+            if (upcomingPayments.length > 0) {
+                const nextDueDate = upcomingPayments[0].toDate();
+                dashboard.nextPayment.textContent = formatDate(upcomingPayments[0]);
+                const today = new Date();
+                const diffTime = Math.abs(nextDueDate - today);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+                dashboard.paymentDays.textContent = `${diffDays} days remaining`;
+            } else {
+                dashboard.nextPayment.textContent = "N/A";
+                dashboard.paymentDays.textContent = "No upcoming payments";
+            }
+            
+            renderActivityFeed();
+        }
+
+        function renderDashboardChart(policies) {
+            if (!dashboard.chart) return;
+            const ctx = dashboard.chart.getContext('2d');
+            if (!ctx) return;
+
+            const activePolicies = policies.filter(p => p.status === 'Active');
+            const data = {
+                "Auto": activePolicies.filter(p => p.type === 'Auto').reduce((sum, p) => sum + p.premium, 0),
+                "Home": activePolicies.filter(p => p.type === 'Home').reduce((sum, p) => sum + p.premium, 0),
+                "Life": activePolicies.filter(p => p.type === 'Life').reduce((sum, p) => sum + p.premium, 0),
+                "Renter": activePolicies.filter(p => p.type === 'Renter').reduce((sum, p) => sum + p.premium, 0)
+            };
+
+            const labels = Object.keys(data).filter(k => data[k] > 0);
+            const values = Object.values(data).filter(v => v > 0);
+            const totalPremium = values.reduce((sum, v) => sum + v, 0);
+
+            if (dashboardChartInstance) {
+                dashboardChartInstance.destroy();
+            }
+            
+            dashboardChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: [
+                            'rgba(0, 122, 255, 0.8)', // ios-blue
+                            'rgba(52, 199, 89, 0.8)', // ios-green
+                            'rgba(175, 82, 222, 0.8)', // ios-purple
+                            'rgba(255, 149, 0, 0.8)' // ios-orange
+                        ],
+                        borderColor: '#f8f9fc',
+                        borderWidth: 4,
+                        hoverOffset: 12
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                padding: 20,
+                                font: {
+                                    family: "'SF Pro Display', 'Inter', sans-serif",
+                                    size: 14,
+                                    weight: 500
+                                },
+                                color: '#3A3A3C'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += formatCurrency(context.parsed);
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                },
+                // REMOVED: Custom plugin to draw text in the center
+                plugins: []
+            });
+        }
+        
+        function renderActivityFeed() {
+            const claimsActivity = localClaims.map(c => ({
+                date: c.filedDate,
+                type: 'claim',
+                icon: 'file-text',
+                iconColor: 'text-ios-orange',
+                text: `New claim filed: ${c.type} (#${c.claimId})`
+            }));
+            
+            const notifActivity = localNotifications.map(n => ({
+                date: n.date,
+                type: 'notification',
+                icon: n.icon || 'bell',
+                iconColor: n.iconColor || 'text-ios-blue',
+                text: n.text
+            }));
+            
+            const combinedActivity = [...claimsActivity, ...notifActivity];
+            
+            combinedActivity.sort((a, b) => b.date.toDate() - a.date.toDate());
+            
+            const feed = dashboard.activityFeed;
+            if (!feed) return;
+            
+            const recentActivity = combinedActivity.slice(0, 5);
+            
+            if (recentActivity.length === 0) {
+                feed.innerHTML = `<p class="text-sm text-ios-gray-500">No recent activity.</p>`;
+                return;
+            }
+            
+            feed.innerHTML = recentActivity.map(item => `
+                <div class="flex items-start gap-4 p-4 bg-ios-gray-100/60 rounded-lg">
+                    <i data-lucide="${item.icon}" class="h-6 w-6 ${item.iconColor} mt-1 flex-shrink-0"></i>
+                    <div>
+                        <p class="text-sm text-ios-gray-800">${item.text}</p>
+                        <span class="text-xs text-ios-gray-500">${formatDate(item.date)}</span>
+                    </div>
+                </div>
+            `).join("");
+            
+            lucide.createIcons();
+        }
+
+        function renderPolicies(policies) {
+            policiesPage.loading.classList.add("hidden");
+            
+            if (policies.length === 0) {
+                policiesPage.empty.classList.remove("hidden");
+                policiesPage.list.innerHTML = "";
+                return;
+            }
+            
+            policiesPage.empty.classList.add("hidden");
+            policiesPage.list.innerHTML = policies.map(policy => {
+                const statusColors = { "Active": "text-ios-green bg-ios-green/10", "Pending Review": "text-ios-orange bg-ios-orange/10", "Expired": "text-ios-gray-600 bg-ios-gray-100" };
+                const icon = { "Auto": "car", "Home": "home", "Life": "heart", "Renter": "home" }[policy.type] || "shield";
+                
+                return `
+                    <div class="glass rounded-2xl shadow-ios p-6 premium-card" data-aos="fade-up">
+                        <div class="flex flex-col md:flex-row items-start md:items-center justify-between">
+                            <div class="flex items-center gap-5 mb-4 md:mb-0">
+                                <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-ios-blue/20 to-ios-blue/10 flex items-center justify-center flex-shrink-0">
+                                    <i data-lucide="${icon}" class="h-6 w-6 text-ios-blue"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-semibold text-ios-gray-900">${policy.type} Insurance</h3>
+                                    <p class="text-sm text-ios-gray-500">Policy #${policy.policyId}</p>
+                                </div>
+                            </div>
+                            <div class="flex flex-col md:flex-row items-start md:items-center gap-4 w-full md:w-auto">
+                                <div class="font-semibold text-lg">${formatCurrency(policy.premium)}<span class="text-sm text-ios-gray-500 font-medium"> /mo</span></div>
+                                <span class="${statusColors[policy.status] || statusColors['Expired']} font-medium px-3 py-1 rounded-full text-sm">
+                                    ${policy.status}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 mt-6 pt-4 border-t border-ios-gray-200/60">
+                            <button data-id="${policy.id}" class="policy-details-button text-sm font-semibold text-ios-blue hover:text-blue-500 transition-colors">
+                                View Details
+                            </button>
+                            <span class="text-ios-gray-300">|</span>
+                            <button data-id="${policy.id}" class="policy-download-id-button text-sm font-medium text-ios-gray-600 hover:text-ios-blue transition-colors flex items-center gap-1.5 ${policy.type !== 'Auto' ? 'hidden' : ''}">
+                                <i data-lucide="contact" class="h-4 w-4"></i> ID Card
+                            </button>
+                            <button data-id="${policy.id}" class="policy-download-doc-button text-sm font-medium text-ios-gray-600 hover:text-ios-blue transition-colors flex items-center gap-1.5 ml-auto">
+                                <i data-lucide="download" class="h-4 w-4"></i> Download Doc
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+            
+            lucide.createIcons();
+            $$(".policy-details-button").forEach(btn => btn.addEventListener("click", () => handleViewPolicyDetails(btn.dataset.id)));
+            $$(".policy-download-id-button").forEach(btn => btn.addEventListener("click", () => navigateToPage('documents')));
+            $$(".policy-download-doc-button").forEach(btn => btn.addEventListener("click", () => navigateToPage('documents')));
+        }
+        
+        function renderClaims(claims) {
+            claimsPage.loading.classList.add("hidden");
+            if (claims.length === 0) {
+                claimsPage.empty.classList.remove("hidden");
+                claimsPage.list.innerHTML = "";
+                return;
+            }
+            
+            claimsPage.empty.classList.add("hidden");
+            claimsPage.list.innerHTML = claims.map(claim => {
+                const statusColors = { "Under Review": "text-ios-orange bg-ios-orange/10", "Approved": "text-ios-green bg-ios-green/10", "Denied": "text-ios-red bg-ios-red/10" };
+                const icon = { "Auto Accident": "car", "Home Damage": "home", "General Claim": "file-text" }[claim.type] || "file-text";
+
+                return `
+                    <div class="glass rounded-2xl shadow-ios p-6 flex flex-col md:flex-row items-start md:items-center justify-between premium-card" data-aos="fade-up">
+                        <div class="flex items-center gap-5 mb-4 md:mb-0">
+                            <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-ios-orange/20 to-ios-orange/10 flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="${icon}" class="h-6 w-6 text-ios-orange"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-ios-gray-900">${claim.type}</h3>
+                                <p class="text-sm text-ios-gray-500">Claim #${claim.claimId} | Filed: ${formatDate(claim.filedDate)}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="${statusColors[claim.status] || 'text-ios-gray-600 bg-ios-gray-100'} font-medium px-3 py-1 rounded-full text-sm">
+                                ${claim.status}
+                            </span>
+                            <button data-id="${claim.id}" class="claim-track-button text-sm font-semibold text-ios-blue hover:text-blue-500 transition-colors">
+                                Track Status
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+            
+            lucide.createIcons();
+            $$(".claim-track-button").forEach(btn => btn.addEventListener("click", () => handleTrackClaim(btn.dataset.id)));
+        }
+        
+        function renderBillingMethods(methods) {
+            if (methods.length === 0) {
+                billingPage.paymentMethods.innerHTML = `<p class="text-sm text-ios-gray-500">No payment methods on file.</p>`;
+                return;
+            }
+            billingPage.paymentMethods.innerHTML = methods.map((method, index) => `
+                <div class="flex items-center justify-between p-4 bg-ios-gray-100/60 rounded-lg">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="credit-card" class="h-6 w-6 text-ios-gray-700"></i>
+                        <span class="font-medium">${method.provider} ending in <strong>${method.last4}</strong></span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        ${index === 0 ? '<span class="text-xs font-semibold bg-ios-green/10 text-ios-green px-2 py-0.5 rounded-full">Default</span>' : ''}
+                        <span class="text-sm text-ios-gray-500">Expires ${method.expiry}</span>
+                    </div>
+                </div>
+            `).join("");
+            lucide.createIcons();
+        }
+
+        function renderPaymentHistory(history) {
+            if (history.length === 0) {
+                billingPage.paymentHistory.innerHTML = `<li class="text-sm text-ios-gray-500">No payment history.</li>`;
+                return;
+            }
+            billingPage.paymentHistory.innerHTML = history.map(item => `
+                <li class="flex justify-between py-3 border-b border-ios-gray-200/60">
+                    <div>
+                        <span class="font-medium">${item.description}</span>
+                        <p class="text-sm text-ios-gray-500">${formatDate(item.date)}</p>
+                    </div>
+                    <span class="font-semibold text-lg">${formatCurrency(item.amount)}</span>
+                </li>
+            `).join("").replace(/<\/li>$/, '</li>');
+        }
+        
+        function renderNotifications(notifications) {
+            notificationsPage.loading.classList.add("hidden");
+            const unread = notifications.some(n => !n.read);
+            appNav.notificationDot.classList.toggle("hidden", !unread);
+
+            if (notifications.length === 0) {
+                notificationsPage.empty.classList.remove("hidden");
+                notificationsPage.list.innerHTML = "";
+                return;
+            }
+            notificationsPage.empty.classList.add("hidden");
+            notificationsPage.list.innerHTML = notifications.map(n => `
+                <div class="flex items-start gap-4 p-4 rounded-lg ${n.read ? 'bg-ios-gray-100/60' : 'bg-ios-blue/10'}">
+                    <i data-lucide="${n.icon || 'bell'}" class="h-6 w-6 ${n.iconColor || 'text-ios-blue'} mt-1 flex-shrink-0"></i>
+                    <div>
+                        <p class="text-sm text-ios-gray-800">${n.text}</p>
+                        <span class="text-xs text-ios-gray-500">${formatDate(n.date)}</span>
+                    </div>
+                    ${!n.read ? '<span class="h-2.5 w-2.5 bg-ios-blue rounded-full ml-auto mt-1 flex-shrink-0"></span>' : ''}
+                </div>
+            `).join("");
+            lucide.createIcons();
+        }
+
+        function renderDocuments() {
+            const docs = [
+                {
+                    id: 'doc1',
+                    type: 'Auto',
+                    title: 'Auto ID Card (Porsche 911)',
+                    policyId: 'AU-123456',
+                    icon: 'contact',
+                    color: 'text-ios-green'
+                },
+                {
+                    id: 'doc2',
+                    type: 'Home',
+                    title: 'Homeowners Policy (Full)',
+                    policyId: 'HO-654321',
+                    icon: 'file-text',
+                    color: 'text-ios-blue'
+                },
+                {
+                    id: 'doc3',
+                    type: 'Auto',
+                    title: 'Policy Declarations (Auto)',
+                    policyId: 'AU-123456',
+                    icon: 'file-text',
+                    color: 'text-ios-blue'
+                }
+            ];
+
+            if (docs.length === 0) {
+                documentsPage.empty.classList.remove("hidden");
+                documentsPage.list.innerHTML = "";
+                return;
+            }
+            
+            documentsPage.empty.classList.add("hidden");
+            documentsPage.list.innerHTML = docs.map(doc => `
+                <div class="glass rounded-2xl shadow-ios p-6 premium-card" data-aos="fade-up">
+                    <div class="flex items-center gap-5">
+                        <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-ios-gray-200 to-ios-gray-100 flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="${doc.icon}" class="h-6 w-6 ${doc.color}"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-ios-gray-900">${doc.title}</h3>
+                            <p class="text-sm text-ios-gray-500">Policy #${doc.policyId}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 mt-6 pt-4 border-t border-ios-gray-200/60">
+                        <button class="doc-download-button text-sm font-semibold text-ios-blue hover:text-blue-500 transition-colors flex items-center gap-1.5">
+                           <i data-lucide="download" class="h-4 w-4"></i> Download
+                        </button>
+                        <button class="doc-share-button text-sm font-medium text-ios-gray-600 hover:text-ios-blue transition-colors flex items-center gap-1.5 ml-auto">
+                           <i data-lucide="share-2" class="h-4 w-4"></i> Share
+                        </button>
+                    </div>
+                </div>
+            `).join("");
+
+            lucide.createIcons();
+            $$(".doc-download-button").forEach(btn => btn.addEventListener('click', () => customAlert('Downloaded (Demo)', 'Your document has been saved to your device.')));
+            $$(".doc-share-button").forEach(btn => btn.addEventListener('click', () => customAlert('Shared (Demo)', 'Your document link has been copied to the clipboard.')));
+        }
+
+        async function handleProfileUpdate(e) {
+            e.preventDefault();
+            const data = { name: profilePage.name.value, address: profilePage.address.value };
+            
+            localProfile.name = data.name;
+            localProfile.address = data.address;
+            renderProfile(localProfile);
+            
+            profilePage.saveSuccess.classList.remove("hidden");
+            setTimeout(() => profilePage.saveSuccess.classList.add("hidden"), 3000);
+        }
+        
+        function showClaimModal() {
+            modals.claim.form.reset();
+            hideMessage(modals.claim.error);
+            populateClaimPolicyList();
+            setClaimStep(1);
+            openModal("claim");
+        }
+        
+        function setClaimStep(step) {
+            currentClaimStep = step;
+            modals.claim.steps.forEach((s, i) => s.classList.toggle("hidden", i + 1 !== step));
+            
+            if (step === 3) {
+                const policy = localPolicies.find(p => p.id === currentClaimData.policyDocId);
+                modals.claim.reviewPolicy.textContent = `${policy.type} - ${policy.policyId}`;
+                modals.claim.reviewDate.textContent = currentClaimData.incidentDate;
+                modals.claim.reviewDesc.textContent = currentClaimData.description;
+            }
+        }
+        
+        function handleClaimStep1Next() {
+            const selected = $('input[name="policyId"]:checked');
+            if (!selected) {
+                showMessage(modals.claim.step1Error, "Please select a policy.");
+                return;
+            }
+            hideMessage(modals.claim.step1Error);
+            currentClaimData = { policyDocId: selected.value };
+            setClaimStep(2);
+        }
+
+        function handleClaimStep2Next() {
+            const incidentDate = $("#claim-incident-date").value;
+            const description = $("#claim-description").value;
+            if (!incidentDate || !description) {
+                customAlert("Missing Info", "Please provide both an incident date and a description.");
+                return;
+            }
+            currentClaimData.incidentDate = incidentDate;
+            currentClaimData.description = description;
+            setClaimStep(3);
+        }
+
+        function populateClaimPolicyList() {
+            const activePolicies = localPolicies.filter(p => p.status === "Active");
+            if (activePolicies.length === 0) {
+                modals.claim.policyList.innerHTML = `<p class="text-sm text-ios-gray-500">You have no active policies to file a claim against.</p>`;
+            } else {
+                modals.claim.policyList.innerHTML = activePolicies.map(p => `
+                    <label class="block p-4 border border-ios-gray-200 rounded-lg hover:border-ios-blue cursor-pointer transition-colors has-[:checked]:bg-ios-blue/10 has-[:checked]:border-ios-blue">
+                        <input type="radio" name="policyId" value="${p.id}" class="mr-3">
+                        <span class="font-semibold">${p.type} - ${p.policyId}</span>
+                    </label>
+                `).join("");
+            }
+        }
+        
+        async function handleClaimSubmit(e) {
+            e.preventDefault();
+            const submitBtn = modals.claim.form.querySelector('button[type="submit"]');
+            toggleButtonSpinner(submitBtn, true);
+            
+            const selectedPolicy = localPolicies.find(p => p.id === currentClaimData.policyDocId);
+            const newClaim = {
+                id: `c${Math.floor(100 + Math.random() * 900)}`,
+                policyId: selectedPolicy.policyId,
+                policyDocId: currentClaimData.policyDocId,
+                type: selectedPolicy.type === "Auto" ? "Auto Accident" : (selectedPolicy.type === "Home" ? "Home Damage" : "General Claim"),
+                claimId: `CL-${Math.floor(100000 + Math.random() * 900000)}`,
+                status: "Under Review",
+                filedDate: Timestamp.now(),
+                incidentDate: Timestamp.fromDate(new Date(currentClaimData.incidentDate)),
+                description: currentClaimData.description
+            };
+            
+            await new Promise(res => setTimeout(res, 1000));
+            localClaims.push(newClaim);
+            renderClaims(localClaims);
+            updateDashboard();
+
+            toggleButtonSpinner(submitBtn, false);
+            customAlert("Success", "Your claim has been filed successfully.");
+            closeModal();
+            navigateToPage("claims");
+        }
+        
+        function showQuoteModal() {
+            modals.quote.form.reset();
+            hideMessage(modals.quote.error);
+            toggleQuoteFields();
+            openModal("quote");
+        }
+        
+        function toggleQuoteFields() {
+            const type = modals.quote.typeSelect.value;
+            modals.quote.autoFields.classList.toggle("hidden", type !== "Auto");
+            modals.quote.homeFields.classList.toggle("hidden", type !== "Home" && type !== "Renter");
+        }
+        
+        async function handleQuoteSubmit(e) {
+            e.preventDefault();
+            const submitBtn = modals.quote.form.querySelector('button[type="submit"]');
+            toggleButtonSpinner(submitBtn, true);
+            
+            const policyType = modals.quote.typeSelect.value;
+            const newPolicy = {
+                id: `p${Math.floor(100 + Math.random() * 900)}`,
+                type: policyType,
+                policyId: `QUOTE-${Math.floor(1000 + Math.random() * 9000)}`,
+                status: "Pending Review",
+                premium: (Math.random() * 400 + 50),
+                details: "New quote request details.",
+                nextPaymentDue: null
+            };
+            
+            await new Promise(res => setTimeout(res, 1000));
+            localPolicies.push(newPolicy);
+            renderPolicies(localPolicies);
+            updateDashboard();
+            
+            toggleButtonSpinner(submitBtn, false);
+            customAlert("Success", "Your quote request has been submitted. A new 'Pending' policy has been added.");
+            closeModal();
+            navigateToPage("policies");
+        }
+        
+        function handleViewPolicyDetails(policyId) {
+            const policy = localPolicies.find(p => p.id === policyId);
+            if (!policy) return;
+            
+            modals.policyDetails.title.textContent = `${policy.type} Insurance (${policy.policyId})`;
+            modals.policyDetails.content.innerHTML = `
+                <div class="grid grid-cols-2 gap-4">
+                    <div><strong>Status:</strong> ${policy.status}</div>
+                    <div><strong>Policy ID:</strong> ${policy.policyId}</div>
+                    <div><strong>Premium:</strong> ${formatCurrency(policy.premium)} / month</div>
+                    <div><strong>Next Payment:</strong> ${policy.nextPaymentDue ? formatDate(policy.nextPaymentDue) : 'N/A'}</div>
+                    <div class="col-span-2"><strong>Details:</strong> ${policy.details}</div>
+                </div>
+            `;
+            openModal("policyDetails");
+        }
+        
+        function handleTrackClaim(claimId) {
+            const claim = localClaims.find(c => c.id === claimId);
+            if (!claim) return;
+            
+            modals.trackClaim.title.textContent = `Track Claim: ${claim.claimId}`;
+            
+            const steps = [modals.trackClaim.stepSubmitted, modals.trackClaim.stepReview, modals.trackClaim.stepDecision];
+            steps.forEach(s => s.className = "stepper-item inactive");
+            
+            if (claim.status === 'Under Review') {
+                steps[0].classList.replace("inactive", "complete");
+                steps[1].classList.replace("inactive", "active");
+                modals.trackClaim.statusText.textContent = "Your claim is currently being reviewed by our team.";
+            } else if (claim.status === 'Approved') {
+                steps[0].classList.replace("inactive", "complete");
+                steps[1].classList.replace("inactive", "complete");
+                steps[2].classList.replace("inactive", "complete");
+                modals.trackClaim.statusText.textContent = "Your claim has been approved! Payment will be processed shortly.";
+            } else if (claim.status === 'Denied') {
+                steps[0].classList.replace("inactive", "complete");
+                steps[1].classList.replace("inactive", "complete");
+                steps[2].classList.replace("inactive", "complete");
+                steps[2].querySelector('.stepper-item-icon').classList.replace('bg-green-600', 'bg-ios-red');
+                modals.trackClaim.statusText.textContent = "Your claim has been denied. Please check your email for details.";
+            } else {
+                steps[0].classList.replace("inactive", "active");
+                modals.trackClaim.statusText.textContent = "Your claim has been submitted.";
+            }
+
+            openModal("trackClaim");
+        }
+
+        async function handleChatSubmit(e) {
+            e.preventDefault();
+            const prompt = aiAgentPage.input.value.trim();
+            if (!prompt) return;
+            
+            submitAiPrompt(prompt);
+        }
+
+        function submitAiPrompt(prompt) {
+            aiAgentPage.input.value = "";
+            addChatMessage('user', prompt);
+            aiAgentPage.suggestedPrompts.classList.add('hidden');
+            
+            const thinkingId = `ai-thinking-${Date.now()}`;
+            addChatMessage('ai', '...', thinkingId, true);
+            
+            setTimeout(() => {
+                const response = getFakeAiResponse(prompt);
+                updateChatMessage(thinkingId, response);
+            }, 1500);
+        }
+
+        function getFakeAiResponse(prompt) {
+            prompt = prompt.toLowerCase();
+            
+            if (prompt.includes("summarize") || prompt.includes("coverage")) {
+                const policyTypes = localPolicies.map(p => p.type).join(', ');
+                const activeCount = localPolicies.filter(p => p.status === 'Active').length;
+                return `You have ${localPolicies.length} total policies (${policyTypes}), with ${activeCount} currently active. You also have ${localClaims.length} open claim.`;
+            } 
+            
+            if (prompt.includes("auto premium")) {
+                const autoPolicy = localPolicies.find(p => p.type === 'Auto');
+                if (autoPolicy) {
+                    return `Your auto policy premium for #${autoPolicy.policyId} is ${formatCurrency(autoPolicy.premium)} per month.`;
+                }
+                return "I don't see an active Auto policy in your file.";
+            } 
+            
+            if (prompt.includes("home premium")) {
+                const homePolicy = localPolicies.find(p => p.type === 'Home');
+                if (homePolicy) {
+                    return `Your Homeowner's policy premium for #${homePolicy.policyId} is ${formatCurrency(homePolicy.premium)} per month.`;
+                }
+                return "I don't see an active Home policy in your file.";
+            } 
+            
+            if (prompt.includes("payment due")) {
+                const nextPayment = dashboard.nextPayment.textContent;
+                const days = dashboard.paymentDays.textContent;
+                if (nextPayment !== 'N/A') {
+                    return `Your next payment is due on ${nextPayment} (${days}).`;
+                }
+                return "You have no upcoming payments due.";
+            }
+            
+            if (prompt.includes("claim status")) {
+                if (localClaims.length > 0) {
+                    const claim = localClaims[0];
+                    return `You have one open claim (#${claim.claimId}) for a ${claim.type}. The current status is "${claim.status}".`;
+                }
+                return "You have no open claims.";
+            }
+
+            return "I'm sorry, I can only answer questions about your policies and claims. Please ask me about your coverage, premium, or claim status.";
+        }
+        
+        function addChatMessage(role, text, id = null, isLoading = false) {
+            const messageEl = document.createElement('div');
+            messageEl.classList.add('flex', role === 'user' ? 'justify-end' : 'justify-start');
+            if (id) messageEl.id = id;
+            
+            const bubble = document.createElement('div');
+            bubble.classList.add('p-3', 'rounded-xl', 'max-w-lg', 'chat-bubble-' + role);
+            
+            if (isLoading) {
+                bubble.innerHTML = '<div class="flex items-center gap-2"><div class="h-2 w-2 bg-ios-gray-400 rounded-full animate-bounce"></div><div class="h-2 w-2 bg-ios-gray-400 rounded-full animate-bounce delay-150"></div><div class="h-2 w-2 bg-ios-gray-400 rounded-full animate-bounce delay-300"></div></div>';
+            } else {
+                bubble.textContent = text;
+            }
+            
+            messageEl.appendChild(bubble);
+            aiAgentPage.messages.appendChild(messageEl);
+            aiAgentPage.messages.scrollTop = aiAgentPage.messages.scrollHeight;
+        }
+        
+        function updateChatMessage(id, newText) {
+            const messageEl = $(`#${id}`);
+            if (!messageEl) return;
+            
+            const bubble = messageEl.querySelector('div');
+            bubble.innerHTML = '';
+            bubble.textContent = newText;
+        }
+        
+        function navigateToPage(pageId) {
+            appPages.all.forEach(page => page.classList.add("hidden"));
+            const targetPage = $(`#${pageId}-content`);
+            if (targetPage) {
+                targetPage.classList.remove("hidden");
+            } else {
+                $(`#dashboard-content`).classList.remove("hidden");
+            }
+
+            const activeClasses = ['active-nav'];
+            const inactiveClasses = [];
+
+            appNav.links.forEach(link => {
+                const linkPageId = link.getAttribute('href').substring(1);
+                link.classList.remove(...activeClasses, ...inactiveClasses);
+                
+                if (linkPageId === pageId) {
+                    link.classList.add(...activeClasses);
+                } else {
+                    link.classList.add(...inactiveClasses);
+                }
+            });
+            
+            $("#main-content").scrollTop = 0;
+            
+            if (pageId === 'notifications') {
+                if (db) {
+                    markNotificationsAsRead();
+                } else {
+                    appNav.notificationDot.classList.add('hidden');
+                }
+            }
+        }
+        
+        async function markNotificationsAsRead() {
+            appNav.notificationDot.classList.add('hidden');
+            const unreadNotifs = localNotifications.filter(n => !n.read);
+            
+            for (const notif of unreadNotifs) {
+                try {
+                    const notifRef = doc(db, `artifacts/${appId}/users/${currentUserId}/notifications/${notif.id}`);
+                    await updateDoc(notifRef, { read: true });
+                } catch (e) {
+                    console.warn("Demo mode: Cannot mark notifications as read in DB.");
+                }
+            }
+        }
+        
+        function handleNavClick(e) {
+            e.preventDefault();
+            const link = e.currentTarget;
+            if (link.id === 'logout-button') return;
+            navigateToPage(link.getAttribute('href').substring(1));
+        }
+
+        function handlePolicySearch(e) {
+            const searchText = e.target.value.toLowerCase();
+            const filtered = localPolicies.filter(p => 
+                p.type.toLowerCase().includes(searchText) || 
+                p.policyId.toLowerCase().includes(searchText)
+            );
+            renderPolicies(filtered);
+        }
+        
+        function handleClaimSearch(e) {
+            const searchText = e.target.value.toLowerCase();
+            const filtered = localClaims.filter(c => 
+                c.type.toLowerCase().includes(searchText) || 
+                c.claimId.toLowerCase().includes(searchText)
+            );
+            renderClaims(filtered);
+        }
+
+        function bindEventListeners() {
+            authForm.form.addEventListener("submit", handleAuthSubmit);
+            authForm.toggleLink.addEventListener("click", handleAuthToggle);
+            authForm.forgotLink.addEventListener("click", handleForgotLink);
+            appNav.logoutButton.addEventListener("click", handleLogout);
+            
+            appNav.links.forEach(link => {
+                if (link.id !== 'logout-button') {
+                    link.addEventListener("click", handleNavClick);
+                }
+            });
+            
+            dashboard.actionFileClaim.addEventListener("click", showClaimModal);
+            dashboard.actionDownloadId.addEventListener("click", () => navigateToPage('documents'));
+            dashboard.actionMakePayment.addEventListener("click", () => navigateToPage('billing'));
+            dashboard.filterButton.addEventListener("click", () => customAlert("Coming Soon!", "Advanced filters will be available in a future update."));
+            dashboard.search.addEventListener("keyup", () => customAlert("Search", "Use the search bars within the Policies or Claims pages to filter items."));
+
+            policiesPage.getQuoteButton.addEventListener("click", showQuoteModal);
+            policiesPage.emptyButton.addEventListener("click", showQuoteModal);
+            policiesPage.search.addEventListener("keyup", handlePolicySearch);
+            
+            claimsPage.fileNewButton.addEventListener("click", showClaimModal);
+            claimsPage.emptyButton.addEventListener("click", showClaimModal);
+            claimsPage.search.addEventListener("keyup", handleClaimSearch);
+
+            profilePage.form.addEventListener("submit", handleProfileUpdate);
+            aiAgentPage.form.addEventListener("submit", handleChatSubmit);
+            aiAgentPage.suggestedPrompts.addEventListener('click', (e) => {
+                if (e.target.classList.contains('ai-prompt-button')) {
+                    submitAiPrompt(e.target.textContent);
+                }
+            });
+            
+            modals.messageBox.ok.addEventListener("click", closeModal);
+            modals.backdrop.addEventListener("click", closeModal);
+            modals.claim.cancel.addEventListener("click", closeModal);
+            modals.quote.cancel.addEventListener("click", closeModal);
+            modals.policyDetails.close.addEventListener("click", closeModal);
+            modals.trackClaim.close.addEventListener("click", closeModal);
+            
+            modals.claim.step1Next.addEventListener('click', handleClaimStep1Next);
+            modals.claim.step2Back.addEventListener('click', () => setClaimStep(1));
+            modals.claim.step2Next.addEventListener('click', handleClaimStep2Next);
+            modals.claim.step3Back.addEventListener('click', () => setClaimStep(2));
+            modals.claim.form.addEventListener("submit", handleClaimSubmit);
+            
+            modals.quote.form.addEventListener("submit", handleQuoteSubmit);
+            modals.quote.typeSelect.addEventListener("change", toggleQuoteFields);
+            
+            function setupFilter(options, indicator, renderer, dataStore) {
+                options.forEach((option, index) => {
+                    option.addEventListener('click', function() {
+                        const width = this.offsetWidth;
+                        const offset = this.offsetLeft;
+                        indicator.style.width = `${width - 8}px`;
+                        indicator.style.transform = `translateX(${offset}px)`;
+
+                        options.forEach(opt => opt.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        const filter = this.dataset.filter;
+                        const data = (filter === 'All') ? dataStore : dataStore.filter(item => item.status === filter);
+                        renderer(data);
+                    });
+                });
+                if(options.length > 0) {
+                    const activeOption = [...options].find(o => o.classList.contains('active')) || options[0];
+                    indicator.style.width = `${activeOption.offsetWidth - 8}px`;
+                    indicator.style.transform = `translateX(${activeOption.offsetLeft}px)`;
+                }
+            }
+            
+            document.addEventListener('dataLoaded', () => {
+                 setupFilter(policiesPage.filterOptions, policiesPage.filterIndicator, (data) => renderPolicies(data), localPolicies);
+                 setupFilter(claimsPage.filterOptions, claimsPage.filterIndicator, (data) => renderClaims(data), localClaims);
+            });
+        }
+        
+        function main() {
+            lucide.createIcons();
+            AOS.init({
+                duration: 400,
+                easing: 'ease-out',
+                once: true,
+                delay: 50,
+            });
+            bindEventListeners();
+            setupAuthListener();
+            initialAuth();
+            
+            function updateTime() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+                $('#status-time').textContent = timeString;
+            }
+            updateTime();
+            setInterval(updateTime, 10000);
+        }
+
+        main();
+
+    </script>
+</body>
+</html>
